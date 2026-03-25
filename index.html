@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NileLogic — Wat-Intel · ResilienceIQ</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#1E293B;--blue:#1D4ED8;--teal:#0D9488;--teal-l:#5eead4;--water:#3b82f6;--water-l:#93c5fd;--bg:#f8fafc;--white:#fff;--muted:#64748b;--border:#e2e8f0;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--navy);min-height:100vh;}
+
+header{background:var(--navy);height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem;border-bottom:2px solid var(--water);position:sticky;top:0;z-index:100;}
+.header-left{display:flex;align-items:center;gap:12px;}
+.header-breadcrumb{display:flex;align-items:center;gap:5px;margin-bottom:1px;}
+.bc-item{font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:1.5px;text-transform:uppercase;}
+.bc-sep{color:#334155;font-size:0.65rem;}
+.header-product{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:var(--water-l);display:block;line-height:1.1;}
+.header-badge{background:rgba(59,130,246,0.15);border:1px solid rgba(59,130,246,0.35);color:var(--water-l);font-family:'DM Mono',monospace;font-size:0.58rem;padding:4px 10px;border-radius:999px;letter-spacing:1.5px;}
+
+.layout{display:grid;grid-template-columns:360px 1fr;min-height:calc(100vh - 64px);}
+
+.left-panel{background:white;border-right:1px solid var(--border);overflow-y:auto;padding:1.25rem;display:flex;flex-direction:column;gap:1rem;}
+.panel-label{font-family:'DM Mono',monospace;font-size:0.58rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:0.3rem;}
+.field-group{display:flex;flex-direction:column;gap:0.28rem;}
+label{font-size:0.79rem;font-weight:500;color:var(--navy);}
+input,select,textarea{font-family:'DM Sans',sans-serif;font-size:0.82rem;border:1px solid var(--border);border-radius:6px;padding:7px 10px;color:var(--navy);background:var(--bg);outline:none;transition:border-color 0.2s;width:100%;}
+input:focus,select:focus,textarea:focus{border-color:var(--water);background:white;}
+textarea{resize:vertical;min-height:60px;}
+hr{border:none;border-top:1px dashed var(--border);}
+
+.criterion-row{display:flex;flex-direction:column;gap:3px;}
+.criterion-header{display:flex;justify-content:space-between;align-items:center;}
+.criterion-label{font-size:0.78rem;font-weight:500;color:var(--navy);display:flex;align-items:center;gap:5px;}
+.crit-dot{width:7px;height:7px;border-radius:50%;}
+.criterion-val{font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--water);font-weight:700;}
+input[type="range"]{-webkit-appearance:none;height:3px;border-radius:2px;background:var(--border);padding:0;cursor:pointer;}
+input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;background:var(--water);cursor:pointer;border:2px solid white;box-shadow:0 0 0 2px var(--water);}
+.weight-total{font-family:'DM Mono',monospace;font-size:0.66rem;text-align:right;padding:3px 8px;background:var(--bg);border-radius:4px;border:1px solid var(--border);margin-top:4px;}
+.weight-total.ok{color:#166534;border-color:#166534;}
+.weight-total.over{color:#b91c1c;border-color:#b91c1c;}
+
+.checkbox-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;}
+.checkbox-row{display:flex;align-items:center;gap:5px;font-size:0.78rem;cursor:pointer;}
+.checkbox-row input[type="checkbox"]{width:13px;height:13px;accent-color:var(--water);}
+
+.analyze-btn{background:var(--water);color:white;border:none;border-radius:8px;padding:12px;font-family:'DM Mono',monospace;font-size:0.73rem;letter-spacing:1px;cursor:pointer;transition:all 0.2s;width:100%;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:auto;}
+.analyze-btn:hover{background:#2563eb;transform:translateY(-1px);}
+.analyze-btn:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
+.spinner{width:13px;height:13px;border:2px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 0.7s linear infinite;display:none;}
+.analyze-btn.loading .spinner{display:block;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+.right-panel{padding:1.75rem;overflow-y:auto;display:flex;flex-direction:column;gap:1.5rem;}
+
+.welcome-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;gap:1.25rem;padding:3rem;}
+.welcome-logo{width:100px;height:100px;}
+.welcome-title{font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:700;color:var(--navy);line-height:1.2;}
+.welcome-sub-brand{font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--muted);letter-spacing:2px;margin-top:-0.4rem;}
+.welcome-desc{font-size:0.87rem;color:var(--muted);max-width:440px;line-height:1.75;}
+.tag-row{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;}
+.tag{background:var(--bg);border:1px solid var(--border);border-radius:999px;padding:3px 11px;font-size:0.68rem;color:var(--muted);font-family:'DM Mono',monospace;}
+
+.results-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;}
+.results-title{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:var(--navy);}
+.region-badge{background:var(--navy);color:var(--water-l);font-family:'DM Mono',monospace;font-size:0.65rem;padding:4px 11px;border-radius:999px;letter-spacing:1px;}
+
+.score-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:0.9rem;}
+.score-card{background:white;border:1px solid var(--border);border-radius:10px;padding:0.9rem;position:relative;overflow:hidden;}
+.score-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2.5px;}
+.score-card.c1::before{background:var(--water);}
+.score-card.c2::before{background:var(--blue);}
+.score-card.c3::before{background:var(--teal);}
+.score-card.c4::before{background:var(--navy);}
+.score-label{font-family:'DM Mono',monospace;font-size:0.57rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:3px;}
+.score-value{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;line-height:1;color:var(--water);}
+.score-sub{font-size:0.7rem;color:var(--muted);margin-top:2px;}
+
+.ai-block{background:white;border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+.ai-block-header{background:var(--navy);color:white;padding:10px 15px;display:flex;align-items:center;gap:8px;font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:1.5px;}
+.ai-dot{width:7px;height:7px;background:var(--water-l);border-radius:50%;}
+.ai-dot.pulse{animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+.ai-body{padding:1.2rem;font-size:0.85rem;line-height:1.85;color:var(--navy);white-space:pre-wrap;}
+
+.ctx-chips{display:flex;flex-wrap:wrap;gap:5px;}
+.ctx-chip{background:rgba(59,130,246,0.07);border:1px solid rgba(59,130,246,0.22);color:#1d4ed8;font-size:0.66rem;font-family:'DM Mono',monospace;padding:3px 7px;border-radius:4px;}
+
+.inv-block{background:white;border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+.inv-block-header{padding:11px 15px;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;font-size:0.6rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);display:flex;justify-content:space-between;}
+.inv-table{width:100%;border-collapse:collapse;font-size:0.78rem;}
+.inv-table th{text-align:left;padding:8px 12px;font-family:'DM Mono',monospace;font-size:0.58rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);border-bottom:1px solid var(--border);background:var(--bg);}
+.inv-table td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:middle;}
+.inv-table tr:last-child td{border-bottom:none;}
+.inv-table tr:hover td{background:var(--bg);}
+.inv-name{font-weight:500;}
+.inv-sector{font-size:0.65rem;color:var(--muted);font-family:'DM Mono',monospace;}
+.bar-wrap{background:var(--bg);border-radius:2px;height:5px;overflow:hidden;min-width:70px;}
+.bar-fill{height:100%;border-radius:2px;}
+.priority-HIGH{background:rgba(59,130,246,0.1);color:#1d4ed8;font-size:0.6rem;font-family:'DM Mono',monospace;font-weight:700;padding:2px 7px;border-radius:999px;}
+.priority-MEDIUM{background:rgba(13,148,136,0.1);color:#0f766e;font-size:0.6rem;font-family:'DM Mono',monospace;font-weight:700;padding:2px 7px;border-radius:999px;}
+.priority-LOW{background:rgba(100,116,139,0.1);color:var(--muted);font-size:0.6rem;font-family:'DM Mono',monospace;font-weight:700;padding:2px 7px;border-radius:999px;}
+
+.skeleton{background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:6px;}
+@keyframes shimmer{to{background-position:-200% 0;}}
+.skeleton-line{height:13px;margin-bottom:8px;}
+.skeleton-line.short{width:55%;}
+.skeleton-line.medium{width:78%;}
+.disclaimer{font-size:0.68rem;color:var(--muted);padding:10px 13px;background:var(--bg);border-radius:6px;border-left:3px solid var(--border);line-height:1.5;}
+.error-block{background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:1rem;font-size:0.82rem;color:#991b1b;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <svg width="40" height="40" viewBox="0 0 80 80" fill="none">
+      <path d="M8 50 A32 32 0 0 1 72 50" fill="none" stroke="#93c5fd" stroke-width="1" stroke-linecap="round" opacity="0.25"/>
+      <path d="M14 43 A26 26 0 0 1 66 43" fill="none" stroke="#93c5fd" stroke-width="1.6" stroke-linecap="round" opacity="0.55"/>
+      <path d="M20 36 A20 20 0 0 1 60 36" fill="none" stroke="#93c5fd" stroke-width="3" stroke-linecap="round"/>
+      <text x="40" y="57" text-anchor="middle" font-family="Georgia,serif" font-size="28" font-weight="bold" fill="white">R</text>
+      <text x="55" y="28" font-family="Arial,sans-serif" font-size="11" font-weight="bold" fill="#93c5fd">IQ</text>
+      <circle cx="40" cy="62" r="3" fill="#3b82f6"/>
+    </svg>
+    <div>
+      <div class="header-breadcrumb">
+        <span class="bc-item" style="color:#334155;">ResilienceIQ</span>
+        <span class="bc-sep">›</span>
+        <span class="bc-item" style="color:#93c5fd;">Wat-Intel</span>
+      </div>
+      <span class="header-product">NileLogic</span>
+    </div>
+  </div>
+  <div class="header-badge">AI WATER INVESTMENT PLANNER</div>
+</header>
+
+<div class="layout">
+  <div class="left-panel">
+    <div>
+      <div class="panel-label">📍 Region Context</div>
+      <div style="display:flex;flex-direction:column;gap:0.45rem;">
+        <div class="field-group"><label>Region / Study Area</label><input type="text" id="region" value="Ambovombe, Southern Madagascar"></div>
+        <div class="field-group"><label>Climate Zone</label>
+          <select id="climate">
+            <option value="arid">Arid / Semi-arid</option>
+            <option value="tropical">Tropical Dry</option>
+            <option value="sahel">Sahelian</option>
+            <option value="highland">Highland / Variable</option>
+          </select>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.45rem;">
+          <div class="field-group"><label>Population</label><input type="number" id="population" value="80000"></div>
+          <div class="field-group"><label>Budget (USD)</label><input type="number" id="budget" value="2500000"></div>
+        </div>
+      </div>
+    </div>
+    <hr>
+    <div>
+      <div class="panel-label">📊 Data Availability</div>
+      <div class="checkbox-grid">
+        <label class="checkbox-row"><input type="checkbox" checked id="d_satellite"> Satellite RS</label>
+        <label class="checkbox-row"><input type="checkbox" id="d_gauge"> Stream Gauges</label>
+        <label class="checkbox-row"><input type="checkbox" checked id="d_climate"> Climate Reanalysis</label>
+        <label class="checkbox-row"><input type="checkbox" id="d_census"> Census Data</label>
+        <label class="checkbox-row"><input type="checkbox" checked id="d_ngo"> NGO/CRS Reports</label>
+        <label class="checkbox-row"><input type="checkbox" id="d_groundwater"> Groundwater Logs</label>
+      </div>
+    </div>
+    <hr>
+    <div>
+      <div class="panel-label">⚖️ Investment Priorities <span style="font-size:0.57rem;color:var(--muted)">(total = 100)</span></div>
+      <div style="display:flex;flex-direction:column;gap:0.55rem;">
+        <div class="criterion-row">
+          <div class="criterion-header"><span class="criterion-label"><span class="crit-dot" style="background:#0D9488"></span>Social Equity</span><span class="criterion-val" id="val_social">35</span></div>
+          <input type="range" min="0" max="100" value="35" id="w_social" oninput="updateWeights()">
+        </div>
+        <div class="criterion-row">
+          <div class="criterion-header"><span class="criterion-label"><span class="crit-dot" style="background:#1D4ED8"></span>Economic Viability</span><span class="criterion-val" id="val_econ">25</span></div>
+          <input type="range" min="0" max="100" value="25" id="w_econ" oninput="updateWeights()">
+        </div>
+        <div class="criterion-row">
+          <div class="criterion-header"><span class="criterion-label"><span class="crit-dot" style="background:#166534"></span>Environmental Impact</span><span class="criterion-val" id="val_env">20</span></div>
+          <input type="range" min="0" max="100" value="20" id="w_env" oninput="updateWeights()">
+        </div>
+        <div class="criterion-row">
+          <div class="criterion-header"><span class="criterion-label"><span class="crit-dot" style="background:#3b82f6"></span>Climate Resilience</span><span class="criterion-val" id="val_climate_w">20</span></div>
+          <input type="range" min="0" max="100" value="20" id="w_climate" oninput="updateWeights()">
+        </div>
+      </div>
+      <div class="weight-total ok" id="weightTotal">Total: 100 / 100 ✓</div>
+    </div>
+    <hr>
+    <div>
+      <div class="panel-label">🌡️ Climate Scenario</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.45rem;">
+        <div class="field-group"><label>Pathway</label>
+          <select id="scenario"><option value="SSP2-4.5">SSP2-4.5</option><option value="SSP5-8.5">SSP5-8.5</option><option value="both">Ensemble</option></select>
+        </div>
+        <div class="field-group"><label>Horizon</label>
+          <select id="horizon"><option value="2030-2059">2030–2059</option><option value="2070-2099">2070–2099</option><option value="both">Both</option></select>
+        </div>
+      </div>
+    </div>
+    <hr>
+    <div>
+      <div class="panel-label">💬 Additional Context</div>
+      <textarea id="extraContext">Rainfed agriculture, AES borehole network, zebu-cart vendor distribution. CHIRPS/GLEAM/SSEBop available. Extreme drought risk in Androy region. CRS partnership.</textarea>
+    </div>
+    <button class="analyze-btn" id="analyzeBtn" onclick="runAnalysis()">
+      <div class="spinner"></div>
+      <span class="btn-text">⚡ GENERATE INVESTMENT PLAN</span>
+    </button>
+  </div>
+
+  <div class="right-panel" id="rightPanel">
+    <div class="welcome-state" id="welcomeState">
+      <svg class="welcome-logo" viewBox="0 0 100 100" fill="none">
+        <path d="M8 62 A42 42 0 0 1 92 62" fill="none" stroke="#1D4ED8" stroke-width="1.3" stroke-linecap="round" opacity="0.22"/>
+        <path d="M16 51 A34 34 0 0 1 84 51" fill="none" stroke="#1D4ED8" stroke-width="2.2" stroke-linecap="round" opacity="0.52"/>
+        <path d="M24 40 A26 26 0 0 1 76 40" fill="none" stroke="#3b82f6" stroke-width="4" stroke-linecap="round"/>
+        <text x="50" y="72" text-anchor="middle" font-family="Georgia,serif" font-size="42" font-weight="bold" fill="#1E293B">R</text>
+        <text x="69" y="30" font-family="Arial,sans-serif" font-size="12" font-weight="bold" fill="#3b82f6">IQ</text>
+        <circle cx="50" cy="78" r="4.5" fill="#3b82f6"/>
+      </svg>
+      <div class="welcome-title">NileLogic</div>
+      <div class="welcome-sub-brand">WAT-INTEL · RESILIENCEIQ</div>
+      <div class="welcome-desc">AI-powered water investment planning for data-scarce dryland regions. Configure your region, set your priorities, and generate a multi-criteria investment plan in seconds.</div>
+      <div class="tag-row">
+        <span class="tag">WEAP-aligned</span>
+        <span class="tag">SSP Scenarios</span>
+        <span class="tag">MCDA</span>
+        <span class="tag">Remote Sensing</span>
+        <span class="tag">Data-Scarce</span>
+        <span class="tag">Sub-Saharan Africa</span>
+      </div>
+    </div>
+    <div id="resultsArea" style="display:none;flex-direction:column;gap:1.5rem;"></div>
+  </div>
+</div>
+
+<script>
+function updateWeights(){
+  const ids=['social','econ','env','climate'];
+  const vids=['val_social','val_econ','val_env','val_climate_w'];
+  let total=0;
+  ids.forEach((id,i)=>{
+    const v=parseInt(document.getElementById('w_'+id).value);
+    document.getElementById(vids[i]).textContent=v;
+    total+=v;
+  });
+  const el=document.getElementById('weightTotal');
+  el.textContent=`Total: ${total} / 100 ${total===100?'✓':'⚠️'}`;
+  el.className='weight-total '+(total===100?'ok':'over');
+}
+function getDataFlags(){
+  const map={d_satellite:'Satellite RS',d_gauge:'Stream Gauges',d_climate:'Climate Reanalysis',d_census:'Census Data',d_ngo:'NGO Reports',d_groundwater:'Groundwater Logs'};
+  return Object.entries(map).filter(([id])=>document.getElementById(id).checked).map(([,v])=>v);
+}
+function buildPrompt(){
+  return `You are a water security investment advisor for data-scarce dryland regions. Generate a structured water investment portfolio.
+
+Region: ${document.getElementById('region').value}
+Climate: ${document.getElementById('climate').value}
+Population: ${parseInt(document.getElementById('population').value).toLocaleString()}
+Budget: $${parseInt(document.getElementById('budget').value).toLocaleString()} USD
+Scenario: ${document.getElementById('scenario').value} · ${document.getElementById('horizon').value}
+Data: ${getDataFlags().join(', ')}
+Context: ${document.getElementById('extraContext').value}
+Weights — Social: ${document.getElementById('w_social').value}%, Economic: ${document.getElementById('w_econ').value}%, Environmental: ${document.getElementById('w_env').value}%, Climate: ${document.getElementById('w_climate').value}%
+
+Return ONLY JSON (no markdown):
+{"summary":"2-3 sentences","context_flags":["3-5 constraints"],"investments":[{"rank":1,"name":"...","sector":"...","description":"2 sentences","social_score":75,"econ_score":60,"env_score":80,"climate_score":85,"weighted_score":76,"cost_estimate":"$X–Y M","implementation":"SHORT","priority":"HIGH"}],"data_strategy":"1-2 sentences","risk_note":"1-2 sentences","top_recommendation":"single action"}
+5-6 investments, scores 0-100, priority HIGH/MEDIUM/LOW.`;
+}
+async function runAnalysis(){
+  const btn=document.getElementById('analyzeBtn');
+  btn.classList.add('loading');btn.disabled=true;
+  document.getElementById('welcomeState').style.display='none';
+  const ra=document.getElementById('resultsArea');
+  ra.style.display='flex';
+  ra.innerHTML=`<div class="ai-block"><div class="ai-block-header"><div class="ai-dot pulse"></div>NILELOGIC · WAT-INTEL · ANALYZING...</div><div class="ai-body"><div class="skeleton skeleton-line medium"></div><div class="skeleton skeleton-line"></div><div class="skeleton skeleton-line short"></div></div></div>`;
+  try{
+    const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,messages:[{role:"user",content:buildPrompt()}]})});
+    const data=await res.json();
+    const raw=data.content.map(b=>b.text||'').join('');
+    const result=JSON.parse(raw.replace(/```json|```/g,'').trim());
+    renderResults(result);
+  }catch(err){ra.innerHTML=`<div class="error-block">⚠️ ${err.message}</div>`;}
+  btn.classList.remove('loading');btn.disabled=false;
+}
+function renderResults(r){
+  const region=document.getElementById('region').value;
+  const sorted=[...r.investments].sort((a,b)=>b.weighted_score-a.weighted_score);
+  const colors=['#3b82f6','#1D4ED8','#0D9488'];
+  document.getElementById('resultsArea').innerHTML=`
+    <div class="results-header">
+      <div class="results-title">Investment Portfolio Analysis</div>
+      <div class="region-badge">${region.split(',')[0].toUpperCase()}</div>
+    </div>
+    <div class="score-grid">
+      <div class="score-card c1"><div class="score-label">Top Score</div><div class="score-value">${sorted[0]?.weighted_score??'--'}</div><div class="score-sub">${sorted[0]?.name?.split(' ').slice(0,2).join(' ')??''}</div></div>
+      <div class="score-card c2"><div class="score-label">Options</div><div class="score-value" style="color:var(--blue)">${sorted.length}</div><div class="score-sub">Ranked</div></div>
+      <div class="score-card c3"><div class="score-label">Scenario</div><div class="score-value" style="color:var(--teal);font-size:1.1rem">${document.getElementById('scenario').value}</div><div class="score-sub">${document.getElementById('horizon').value}</div></div>
+      <div class="score-card c4"><div class="score-label">Data</div><div class="score-value" style="color:var(--navy)">${getDataFlags().length}</div><div class="score-sub">Sources</div></div>
+    </div>
+    <div class="ai-block">
+      <div class="ai-block-header"><div class="ai-dot"></div>STRATEGIC SUMMARY</div>
+      <div class="ai-body">${r.summary}\n\n<strong>Top Recommendation:</strong> ${r.top_recommendation}\n\n<strong>Data Strategy:</strong> ${r.data_strategy}\n\n<strong>Risk Note:</strong> ${r.risk_note}</div>
+    </div>
+    <div><div class="panel-label" style="margin-bottom:7px">⚡ Key Regional Constraints</div><div class="ctx-chips">${(r.context_flags||[]).map(f=>`<span class="ctx-chip">${f}</span>`).join('')}</div></div>
+    <div class="inv-block">
+      <div class="inv-block-header"><span>RANKED INVESTMENT OPTIONS</span><span>${sorted.length} options · MCDA weighted</span></div>
+      <table class="inv-table">
+        <thead><tr><th>#</th><th>Investment</th><th>Social</th><th>Econ</th><th>Climate</th><th>Score</th><th>Cost</th><th>Time</th><th>Priority</th></tr></thead>
+        <tbody>${sorted.map((inv,i)=>`<tr>
+          <td><strong style="color:${colors[i]||'#64748b'}">${i+1}</strong></td>
+          <td><div class="inv-name">${inv.name}</div><div class="inv-sector">${(inv.sector||'').replace(/_/g,' ')}</div></td>
+          <td><div class="bar-wrap"><div class="bar-fill" style="width:${inv.social_score}%;background:#0D9488"></div></div></td>
+          <td><div class="bar-wrap"><div class="bar-fill" style="width:${inv.econ_score}%;background:#1D4ED8"></div></div></td>
+          <td><div class="bar-wrap"><div class="bar-fill" style="width:${inv.climate_score}%;background:#3b82f6"></div></div></td>
+          <td><strong style="font-family:'DM Mono',monospace;font-size:0.85rem;color:${colors[i]||'var(--navy)'}">${inv.weighted_score}</strong></td>
+          <td style="font-size:0.73rem;white-space:nowrap">${inv.cost_estimate}</td>
+          <td style="font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--muted)">${inv.implementation}</td>
+          <td><span class="priority-${inv.priority}">${inv.priority}</span></td>
+        </tr>`).join('')}</tbody>
+      </table>
+    </div>
+    <div class="disclaimer">⚠️ NileLogic is an AI-generated planning aid under the Wat-Intel section of ResilienceIQ. Validate with local stakeholders and hydrological modeling before capital allocation.</div>`;
+}
+updateWeights();
+</script>
+</body>
+</html>
