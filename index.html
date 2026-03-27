@@ -307,6 +307,34 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;hei
 .sign-in-btn{background:var(--water);color:white;border:none;border-radius:6px;padding:5px 14px;font-family:'DM Mono',monospace;font-size:0.62rem;cursor:pointer;}
 .sign-in-btn:hover{background:#2563eb;}
 
+
+/* COORDINATES & GEOJSON */
+.coord-row{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem;margin-top:0.4rem;}
+.coord-field{display:flex;flex-direction:column;gap:2px;}
+.coord-field label{font-size:0.7rem;font-weight:500;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:0.5px;}
+.coord-field input{font-family:'DM Mono',monospace;font-size:0.75rem;border:1px solid var(--border);border-radius:6px;padding:6px 8px;color:var(--navy);background:var(--bg);outline:none;transition:border-color 0.15s;}
+.coord-field input:focus{border-color:var(--water);background:white;}
+.geo-upload{display:flex;align-items:center;gap:6px;padding:6px 9px;background:var(--bg);border:1.5px dashed var(--border);border-radius:7px;cursor:pointer;transition:all 0.15s;margin-top:5px;}
+.geo-upload:hover{border-color:var(--teal);background:rgba(13,148,136,0.04);}
+.geo-upload-icon{font-size:14px;flex-shrink:0;}
+.geo-upload-text{font-size:0.72rem;color:var(--muted);flex:1;}
+.geo-upload-btn{font-family:'DM Mono',monospace;font-size:0.58rem;color:var(--teal);border:1px solid rgba(13,148,136,0.3);border-radius:999px;padding:2px 8px;white-space:nowrap;}
+.geo-status{font-family:'DM Mono',monospace;font-size:0.6rem;padding:4px 8px;border-radius:5px;margin-top:4px;display:none;}
+.geo-status.loaded{background:rgba(13,148,136,0.08);border:1px solid rgba(13,148,136,0.2);color:#0f766e;display:flex;align-items:center;gap:5px;}
+.geo-status.error{background:#fef2f2;border:1px solid #fecaca;color:#991b1b;display:flex;align-items:center;gap:5px;}
+.coord-source{font-family:'DM Mono',monospace;font-size:0.55rem;color:var(--muted);margin-top:2px;text-align:right;}
+
+
+/* VALIDATION */
+.field-error{border-color:#ef4444 !important;background:#fef2f2 !important;}
+.validation-toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);background:#1e293b;color:white;border-radius:10px;padding:0.85rem 1.25rem;box-shadow:0 8px 30px rgba(0,0,0,0.25);z-index:300;font-size:0.82rem;min-width:280px;max-width:420px;display:none;animation:slideUp 0.2s ease;}
+.validation-toast.show{display:block;}
+@keyframes slideUp{from{opacity:0;transform:translateX(-50%) translateY(10px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
+.toast-title{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:1.5px;color:#f87171;margin-bottom:6px;}
+.toast-item{display:flex;align-items:center;gap:6px;padding:2px 0;font-size:0.78rem;color:#cbd5e1;}
+.toast-item::before{content:'·';color:#f87171;font-weight:700;}
+
+.req{color:#ef4444;margin-left:2px;font-size:0.7rem;}
 ::-webkit-scrollbar{width:4px;}
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
@@ -339,8 +367,6 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;hei
     <span class="hd-version">v2.1</span>
     <span class="hd-badge">WATER INVESTMENT INTELLIGENCE</span>
     <div id="authArea" style="display:flex;gap:6px;align-items:center;"><button class="sign-in-btn" style="background:transparent;border:1px solid #334155;color:#94a3b8;" onclick="openAuth('login')">Log in</button><button class="sign-in-btn" onclick="openAuth('signup')">Sign up</button></div>
-    <div id="authArea">
-    </div>
   </div>
 </header>
 
@@ -354,7 +380,7 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;hei
         <div class="sec-head"><span class="sec-icon">📍</span><span class="sec-label" data-i18n="location">Location</span></div>
         <div style="display:flex;flex-direction:column;gap:0.4rem;">
           <div class="field">
-            <label data-i18n="country">Country</label>
+            <label data-i18n="country">Country<span class="req">*</span></label>
             <select id="country" onchange="onCountryChange()">
               <option value="" data-i18n="select_country">— Select country —</option>
               <optgroup label="Sub-Saharan Africa">
@@ -430,6 +456,26 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;hei
             <div class="field"><label data-i18n="region">Region / Province</label><input type="text" id="region" placeholder="e.g. Androy"></div>
             <div class="field"><label data-i18n="study_area">Study Area</label><input type="text" id="studyarea" placeholder="e.g. Ambovombe"></div>
           </div>
+          <!-- COORDINATES -->
+          <div class="coord-row">
+            <div class="coord-field">
+              <label>📍 Latitude<span class="req">*</span></label>
+              <input type="number" id="studyLat" placeholder="e.g. -25.17" step="0.0001" onchange="onCoordChange()">
+            </div>
+            <div class="coord-field">
+              <label>📍 Longitude<span class="req">*</span></label>
+              <input type="number" id="studyLon" placeholder="e.g. 46.08" step="0.0001" onchange="onCoordChange()">
+            </div>
+          </div>
+          <div class="coord-source" id="coordSource">Using country centroid — enter study area coordinates or upload boundary</div>
+          <!-- GEOJSON / KML UPLOAD -->
+          <label class="geo-upload" for="geoFileInput">
+            <span class="geo-upload-icon">🗺️</span>
+            <span class="geo-upload-text">Upload boundary file</span>
+            <span class="geo-upload-btn">GeoJSON · KML · SHP</span>
+            <input type="file" id="geoFileInput" accept=".geojson,.json,.kml,.zip" style="display:none" onchange="handleGeoFile(this.files[0])">
+          </label>
+          <div class="geo-status" id="geoStatus"></div>
           <div class="field">
             <label data-i18n="climate_zone">Climate Zone <span style="font-size:0.65rem;color:var(--muted);font-weight:400">(auto)</span></label>
             <select id="climate">
@@ -499,11 +545,11 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;hei
         <div class="sec-head"><span class="sec-icon">👥</span><span class="sec-label" data-i18n="context">Context</span></div>
         <div class="row2">
           <div class="field">
-            <label data-i18n="population">Population</label>
+            <label data-i18n="population">Population<span class="req">*</span></label>
             <input type="number" id="population" placeholder="auto-filled">
           </div>
           <div class="field">
-            <label data-i18n="budget">Budget (USD)</label>
+            <label data-i18n="budget">Budget (USD)<span class="req">*</span></label>
             <input type="number" id="budget" value="2500000">
           </div>
         </div>
@@ -551,7 +597,7 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;hei
 
       <!-- SSP PATHWAYS -->
       <div>
-        <div class="sec-head"><span class="sec-icon">🌡️</span><span class="sec-label" data-i18n="ssp">SSP Pathways</span></div>
+        <div class="sec-head"><span class="sec-icon">🌡️</span><span class="sec-label" data-i18n="ssp">SSP Pathways</span><span class="req" style="font-size:0.65rem;margin-left:3px;">*</span></div>
         <div class="ssp-grid" id="sspGrid">
           <div class="ssp-pill ssp1" onclick="togglePill(this)">SSP1-1.9</div>
           <div class="ssp-pill ssp1" onclick="togglePill(this)">SSP1-2.6</div>
@@ -563,7 +609,7 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;hei
 
       <!-- PLANNING HORIZONS -->
       <div>
-        <div class="sec-head"><span class="sec-icon">📅</span><span class="sec-label" data-i18n="horizons">Planning Horizons</span></div>
+        <div class="sec-head"><span class="sec-icon">📅</span><span class="sec-label" data-i18n="horizons">Planning Horizons</span><span class="req" style="font-size:0.65rem;margin-left:3px;">*</span></div>
         <div class="horizon-grid" id="horizonGrid">
           <div class="horizon-pill" onclick="togglePill(this)">2030</div>
           <div class="horizon-pill active" onclick="togglePill(this)">2040</div>
@@ -579,7 +625,7 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;hei
       <div style="position:relative;">
         <div class="sec-head">
           <span class="sec-icon">⚖️</span>
-          <span class="sec-label" data-i18n="priorities">Investment Priorities</span>
+          <span class="sec-label" data-i18n="priorities">Investment Priorities</span><span class="req" style="font-size:0.65rem;margin-left:3px;">*</span>
           <span style="font-size:0.6rem;color:var(--muted);margin-left:auto;" data-i18n="max_6">Max 6</span>
         </div>
         <div class="mcda-pool" id="mcdaPool">
@@ -607,7 +653,7 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;hei
       <div style="position:relative;">
         <div class="sec-head">
           <span class="sec-icon">🏗️</span>
-          <span class="sec-label" data-i18n="sectors">Investment Sectors</span>
+          <span class="sec-label" data-i18n="sectors">Investment Sectors</span><span class="req" style="font-size:0.65rem;margin-left:3px;">*</span>
           <span style="font-size:0.6rem;color:var(--muted);margin-left:auto;" data-i18n="max_6">Max 6</span>
         </div>
         <div class="sector-selected" id="sectorSelected">
@@ -640,6 +686,7 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;hei
 
     </div>
     <div class="left-footer">
+      <div style="font-size:0.62rem;color:var(--muted);margin-bottom:6px;font-family:'DM Mono',monospace;"><span style="color:#ef4444;">*</span> Required fields</div>
       <button class="analyze-btn" id="analyzeBtn" onclick="runAnalysis()">
         <div class="spinner"></div>
         <span class="btn-text" data-i18n="generate">⚡ GENERATE INVESTMENT PLAN</span>
@@ -845,6 +892,111 @@ function setLang(lang, btn) {
 
 // ── COUNTRY & COORDINATES ────────────────────────────────
 let countryLat = 0, countryLon = 0;
+let studyLat = 0, studyLon = 0; // study area coordinates (more precise than country centroid)
+
+function onCoordChange() {
+  const lat = parseFloat(document.getElementById('studyLat').value);
+  const lon = parseFloat(document.getElementById('studyLon').value);
+  if (!isNaN(lat) && !isNaN(lon)) {
+    studyLat = lat;
+    studyLon = lon;
+    document.getElementById('coordSource').textContent = `Custom coordinates: ${lat.toFixed(4)}°, ${lon.toFixed(4)}° — live data will use this location`;
+    document.getElementById('coordSource').style.color = 'var(--teal)';
+  }
+}
+
+function handleGeoFile(file) {
+  if (!file) return;
+  const status = document.getElementById('geoStatus');
+  const ext = file.name.split('.').pop().toLowerCase();
+
+  if (!['geojson','json','kml'].includes(ext)) {
+    status.className = 'geo-status error';
+    status.textContent = '✗ Unsupported format. Use GeoJSON or KML.';
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      let centroid = null;
+      if (ext === 'geojson' || ext === 'json') {
+        const gj = JSON.parse(e.target.result);
+        centroid = computeGeoJSONCentroid(gj);
+      } else if (ext === 'kml') {
+        centroid = computeKMLCentroid(e.target.result);
+      }
+      if (centroid) {
+        studyLat = centroid.lat;
+        studyLon = centroid.lon;
+        document.getElementById('studyLat').value = centroid.lat.toFixed(6);
+        document.getElementById('studyLon').value = centroid.lon.toFixed(6);
+        document.getElementById('coordSource').textContent = `Centroid from ${file.name}: ${centroid.lat.toFixed(4)}°, ${centroid.lon.toFixed(4)}°`;
+        document.getElementById('coordSource').style.color = 'var(--teal)';
+        status.className = 'geo-status loaded';
+        status.innerHTML = `✓ ${file.name} · centroid computed · ${centroid.pointCount} vertices`;
+        // Auto-fill study area name from filename if empty
+        const nameField = document.getElementById('studyarea');
+        if (!nameField.value) nameField.value = file.name.replace(/\.[^.]+$/, '').replace(/[_-]/g, ' ');
+      } else {
+        throw new Error('Could not compute centroid');
+      }
+    } catch(err) {
+      status.className = 'geo-status error';
+      status.textContent = '✗ Could not read file: ' + err.message;
+    }
+  };
+  reader.readAsText(file);
+}
+
+function computeGeoJSONCentroid(gj) {
+  const coords = [];
+  function extractCoords(obj) {
+    if (!obj) return;
+    if (obj.type === 'FeatureCollection') obj.features.forEach(f => extractCoords(f));
+    else if (obj.type === 'Feature') extractCoords(obj.geometry);
+    else if (obj.type === 'Polygon') obj.coordinates.forEach(ring => ring.forEach(c => coords.push(c)));
+    else if (obj.type === 'MultiPolygon') obj.coordinates.forEach(poly => poly.forEach(ring => ring.forEach(c => coords.push(c))));
+    else if (obj.type === 'Point') coords.push(obj.coordinates);
+    else if (obj.type === 'MultiPoint' || obj.type === 'LineString') obj.coordinates.forEach(c => coords.push(c));
+    else if (obj.type === 'MultiLineString') obj.coordinates.forEach(line => line.forEach(c => coords.push(c)));
+    else if (obj.type === 'GeometryCollection') obj.geometries.forEach(g => extractCoords(g));
+  }
+  extractCoords(gj);
+  if (!coords.length) throw new Error('No coordinates found');
+  const lon = coords.reduce((s,c) => s + c[0], 0) / coords.length;
+  const lat = coords.reduce((s,c) => s + c[1], 0) / coords.length;
+  return { lat: parseFloat(lat.toFixed(6)), lon: parseFloat(lon.toFixed(6)), pointCount: coords.length };
+}
+
+function computeKMLCentroid(kmlText) {
+  const coordMatches = kmlText.match(/<coordinates[^>]*>([\s\S]*?)<\/coordinates>/gi) || [];
+  const coords = [];
+  coordMatches.forEach(block => {
+    const inner = block.replace(/<\/?coordinates[^>]*>/gi, '').trim();
+    inner.split(/\s+/).forEach(tuple => {
+      const parts = tuple.split(',');
+      if (parts.length >= 2) {
+        const lon = parseFloat(parts[0]), lat = parseFloat(parts[1]);
+        if (!isNaN(lat) && !isNaN(lon)) coords.push([lon, lat]);
+      }
+    });
+  });
+  if (!coords.length) throw new Error('No coordinates found in KML');
+  const lon = coords.reduce((s,c) => s + c[0], 0) / coords.length;
+  const lat = coords.reduce((s,c) => s + c[1], 0) / coords.length;
+  return { lat: parseFloat(lat.toFixed(6)), lon: parseFloat(lon.toFixed(6)), pointCount: coords.length };
+}
+
+function getStudyCoords() {
+  // Returns the best available coordinates — study area if set, else country centroid
+  const lat = parseFloat(document.getElementById('studyLat')?.value);
+  const lon = parseFloat(document.getElementById('studyLon')?.value);
+  if (!isNaN(lat) && !isNaN(lon) && (lat !== 0 || lon !== 0)) {
+    return { lat, lon };
+  }
+  return { lat: countryLat, lon: countryLon };
+}
 const popEstimates = {
   'Madagascar':1800000,'Mali':4000000,'Niger':3000000,'Ethiopia':12000000,
   'Somalia':2000000,'Chad':3500000,'Mozambique':6000000,'Zimbabwe':4500000,
@@ -871,8 +1023,17 @@ function onCountryChange() {
   document.getElementById('climate').value = parts[3];
   const pop = popEstimates[country];
   if (pop) document.getElementById('population').value = pop;
+  // Set coordinate fields to country centroid as default
+  document.getElementById('studyLat').value = countryLat.toFixed(4);
+  document.getElementById('studyLon').value = countryLon.toFixed(4);
+  studyLat = countryLat;
+  studyLon = countryLon;
+  document.getElementById('coordSource').textContent = 'Using country centroid — refine with study area coordinates or boundary file';
+  // Reset geo status
+  document.getElementById('geoStatus').className = 'geo-status';
   // Reset live data
   document.getElementById('liveDataGrid').style.display = 'none';
+  clearValidation();
   setStatus('idle', i18n[currentLang].select_country_first || 'Click Fetch to load live data');
 }
 
@@ -892,16 +1053,16 @@ let liveData = {};
 async function fetchLiveData() {
   const country = document.getElementById('country').value;
   if (!country) { alert('Please select a country first.'); return; }
-  if (getActivePills('sspGrid').length === 0) { alert('Please select at least one SSP pathway.'); return; }
   const countryName = country.split('|')[0];
   setStatus('loading', 'Fetching CHIRPS + World Bank data...');
   liveData = {};
 
   try {
     // 1. CHIRPS via ClimateSERV — annual rainfall for the country centroid
-    await fetchCHIRPS(countryLat, countryLon);
+    const coords = getStudyCoords();
+    await fetchCHIRPS(coords.lat, coords.lon);
     // 2. ERA5 PET proxy via Open-Meteo
-    await fetchPET(countryLat, countryLon);
+    await fetchPET(coords.lat, coords.lon);
     // 3. World Bank
     await fetchWorldBank(countryName);
 
@@ -1239,6 +1400,7 @@ function buildPrompt() {
   return `You are a senior water security investment advisor. You work across all regions — arid, tropical, highland, coastal, flood-prone, and data-scarce — wherever water investment decisions need to be made. Generate a detailed, location-specific water investment portfolio analysis.
 
 LOCATION: ${country} > ${region} > ${study}
+COORDINATES: ${getStudyCoords().lat.toFixed(4)}°, ${getStudyCoords().lon.toFixed(4)}° (${document.getElementById('coordSource')?.textContent?.includes('Custom') || document.getElementById('coordSource')?.textContent?.includes('Centroid') ? 'study area coordinates' : 'country centroid'})
 CLIMATE ZONE: ${climate}
 POPULATION: ${pop.toLocaleString()}
 BUDGET: $${budget.toLocaleString()} USD
@@ -1283,10 +1445,96 @@ Return ONLY valid JSON — no markdown, no preamble:
 Provide 5-7 investments. Scores 0-100. lat_offset and lon_offset are small offsets from country center for map placement.`;
 }
 
+
+// ── VALIDATION ────────────────────────────────────────────
+function clearValidation() {
+  document.querySelectorAll('.field-error').forEach(el => el.classList.remove('field-error'));
+}
+
+function showToast(errors) {
+  const toast = document.getElementById('validationToast');
+  document.getElementById('toastItems').innerHTML = errors.map(e => `<div class="toast-item">${e}</div>`).join('');
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 4000);
+}
+
+function validateForm() {
+  clearValidation();
+  const errors = [];
+
+  // 1. Country
+  const country = document.getElementById('country').value;
+  if (!country) {
+    errors.push('Country — select a country');
+    document.getElementById('country').classList.add('field-error');
+  }
+
+  // 2. Coordinates
+  const lat = parseFloat(document.getElementById('studyLat')?.value);
+  const lon = parseFloat(document.getElementById('studyLon')?.value);
+  if (isNaN(lat) || isNaN(lon) || (lat === 0 && lon === 0)) {
+    errors.push('Coordinates — select a country or enter lat/lon');
+    document.getElementById('studyLat')?.classList.add('field-error');
+    document.getElementById('studyLon')?.classList.add('field-error');
+  }
+
+  // 3. Population
+  const population = parseInt(document.getElementById('population').value);
+  if (!population || population <= 0) {
+    errors.push('Population — enter the study area population');
+    document.getElementById('population').classList.add('field-error');
+  }
+
+  // 4. Budget
+  const budget = parseInt(document.getElementById('budget').value);
+  if (!budget || budget <= 0) {
+    errors.push('Budget — enter a budget amount in USD');
+    document.getElementById('budget').classList.add('field-error');
+  }
+
+  // 5. Investment priorities (MCDA)
+  if (selectedCriteria.length === 0) {
+    errors.push('Investment Priorities — select at least one criterion');
+    document.getElementById('mcdaPool').style.outline = '2px solid #ef4444';
+    document.getElementById('mcdaPool').style.borderRadius = '8px';
+    setTimeout(() => { document.getElementById('mcdaPool').style.outline = ''; }, 4000);
+  }
+
+  // 6. SSP pathways
+  if (getActivePills('sspGrid').length === 0) {
+    errors.push('SSP Pathways — select at least one scenario');
+    document.getElementById('sspGrid').style.outline = '2px solid #ef4444';
+    document.getElementById('sspGrid').style.borderRadius = '8px';
+    setTimeout(() => { document.getElementById('sspGrid').style.outline = ''; }, 4000);
+  }
+
+  // 7. Investment sectors
+  if (getSelectedSectors().length === 0) {
+    errors.push('Investment Sectors — select at least one sector');
+    document.getElementById('sectorSelected').style.outline = '2px solid #ef4444';
+    document.getElementById('sectorSelected').style.borderRadius = '8px';
+    setTimeout(() => { document.getElementById('sectorSelected').style.outline = ''; }, 4000);
+  }
+
+  // 8. Planning horizons
+  if (getActivePills('horizonGrid').length === 0) {
+    errors.push('Planning Horizons — select at least one horizon');
+    document.getElementById('horizonGrid').style.outline = '2px solid #ef4444';
+    document.getElementById('horizonGrid').style.borderRadius = '8px';
+    setTimeout(() => { document.getElementById('horizonGrid').style.outline = ''; }, 4000);
+  }
+
+  if (errors.length > 0) {
+    showToast(errors);
+    return false;
+  }
+  return true;
+}
+
 // ── RUN ANALYSIS ──────────────────────────────────────────
 async function runAnalysis() {
   const country = document.getElementById('country').value;
-  if (!country) { alert('Please select a country first.'); return; }
+  if (!validateForm()) return;
   const btn = document.getElementById('analyzeBtn');
   btn.classList.add('loading'); btn.disabled = true;
   document.getElementById('welcomeState').style.display = 'none';
@@ -1297,8 +1545,15 @@ async function runAnalysis() {
   try {
     const files = buildFileMessages();
     const msgContent = files ? [...files, {type:'text',text:buildPrompt()}] : buildPrompt();
-    const res = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST", headers: {"Content-Type":"application/json"},
+    // Use CORS proxy to avoid browser CORS restrictions on GitHub Pages
+    const apiUrl = "https://corsproxy.io/?" + encodeURIComponent("https://api.anthropic.com/v1/messages");
+    const res = await fetch(apiUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": "",
+        "anthropic-version": "2023-06-01"
+      },
       body: JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:2000,messages:[{role:"user",content:msgContent}]})
     });
     const data = await res.json();
@@ -1431,8 +1686,9 @@ function renderDataTab(r) {
 function renderMap(r) {
   const mapDiv = document.getElementById('mapContainer');
   if (mapDiv._leaflet_id) return; // already initialized
-  const lat = countryLat || 0;
-  const lon = countryLon || 0;
+  const coords = getStudyCoords();
+  const lat = coords.lat || countryLat || 0;
+  const lon = coords.lon || countryLon || 0;
   const map = L.map('mapContainer').setView([lat, lon], 6);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution:'© OpenStreetMap'}).addTo(map);
   const colors = ['#3b82f6','#1D4ED8','#0D9488','#8b5cf6','#f97316','#ef4444','#22c55e'];
@@ -1591,5 +1847,12 @@ function exportJSON() {
 renderMcdaSliders();
 checkSession();
 </script>
+
+<!-- VALIDATION TOAST -->
+<div class="validation-toast" id="validationToast">
+  <div class="toast-title">⚠ REQUIRED FIELDS MISSING</div>
+  <div id="toastItems"></div>
+</div>
+
 </body>
 </html>
