@@ -338,9 +338,8 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;hei
     </div>
     <span class="hd-version">v2.1</span>
     <span class="hd-badge">WATER INVESTMENT INTELLIGENCE</span>
-    <div id="authArea"><button class="sign-in-btn" onclick="openAuth('login')">Sign in</button></div>
+    <div id="authArea" style="display:flex;gap:6px;align-items:center;"><button class="sign-in-btn" style="background:transparent;border:1px solid #334155;color:#94a3b8;" onclick="openAuth('login')">Log in</button><button class="sign-in-btn" onclick="openAuth('signup')">Sign up</button></div>
     <div id="authArea">
-      <button class="sign-in-btn" onclick="openAuth('login')">Sign in</button>
     </div>
   </div>
 </header>
@@ -759,7 +758,7 @@ function renderUserMenu(user){
 }
 function toggleUserMenu(){document.getElementById('userDropdown')?.classList.toggle('open');}
 document.addEventListener('click',e=>{if(!e.target.closest('.user-menu-wrap'))document.getElementById('userDropdown')?.classList.remove('open');});
-async function signOut(){await _sb.auth.signOut();currentUser=null;document.getElementById('authArea').innerHTML='<button class="sign-in-btn" onclick="openAuth('login')">Sign in</button>';}
+async function signOut(){await _sb.auth.signOut();currentUser=null;document.getElementById('authArea').innerHTML='<div style="display:flex;gap:6px;align-items:center;"><button class="sign-in-btn" style="background:transparent;border:1px solid #334155;color:#94a3b8;" onclick="openAuth('login')">Log in</button><button class="sign-in-btn" onclick="openAuth('signup')">Sign up</button></div>';}
 async function saveAnalysis(){
   if(!currentUser){openAuth('login');return;}
   const r=window._analysisResult;if(!r)return;
