@@ -9,7 +9,7 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <style>
 :root{
   --navy:#1E293B;--blue:#1D4ED8;--teal:#0D9488;--teal-l:#5eead4;
@@ -758,7 +758,7 @@ function renderUserMenu(user){
 }
 function toggleUserMenu(){document.getElementById('userDropdown')?.classList.toggle('open');}
 document.addEventListener('click',e=>{if(!e.target.closest('.user-menu-wrap'))document.getElementById('userDropdown')?.classList.remove('open');});
-async function signOut(){await _sb.auth.signOut();currentUser=null;document.getElementById('authArea').innerHTML='<div style="display:flex;gap:6px;align-items:center;"><button class="sign-in-btn" style="background:transparent;border:1px solid #334155;color:#94a3b8;" onclick="openAuth('login')">Log in</button><button class="sign-in-btn" onclick="openAuth('signup')">Sign up</button></div>';}
+async function signOut(){await _sb.auth.signOut();currentUser=null;document.getElementById('authArea').innerHTML='<div style="display:flex;gap:6px;align-items:center;"><button class="sign-in-btn" style="background:transparent;border:1px solid #334155;color:#94a3b8;" onclick="openAuth(&apos;login&apos;)">Log in</button><button class="sign-in-btn" onclick="openAuth(&apos;signup&apos;)">Sign up</button></div>';}
 async function saveAnalysis(){
   if(!currentUser){openAuth('login');return;}
   const r=window._analysisResult;if(!r)return;
