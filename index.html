@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NileLogic — Wat-Intel · ResilienceIQ</title>
+<title>AquaROI — Wat-Intel · NileLogic</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -352,11 +352,11 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;hei
     </svg>
     <div>
       <div class="hd-bc">
-        <span class="dim">ResilienceIQ</span><span class="sep">›</span>
+        <span class="dim">NileLogic</span><span class="sep">›</span>
         <span class="dim">Wat-Intel</span><span class="sep">›</span>
-        <span class="active">NileLogic</span>
+        <span class="active">AquaROI</span>
       </div>
-      <span class="hd-product">NileLogic</span>
+      <span class="hd-product">AquaROI</span>
     </div>
   </div>
   <div class="hd-right">
@@ -364,7 +364,7 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;hei
       <button class="lang-btn active" onclick="setLang('en',this)">EN</button>
       <button class="lang-btn" onclick="setLang('fr',this)">FR</button>
     </div>
-    <span class="hd-version">v2.1</span>
+    <span class="hd-version">v3.0</span>
     <span class="hd-badge">WATER INVESTMENT INTELLIGENCE</span>
     <div id="authArea" style="display:flex;gap:6px;align-items:center;"><button class="sign-in-btn" style="background:transparent;border:1px solid #334155;color:#94a3b8;" onclick="openAuth('login')">Log in</button><button class="sign-in-btn" onclick="openAuth('signup')">Sign up</button></div>
   </div>
@@ -715,18 +715,18 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;hei
             <circle cx="40" cy="62" r="3" fill="#3b82f6"/>
           </svg>
           <div style="display:flex;align-items:center;gap:8px;">
-            <span style="font-family:'DM Mono',monospace;font-size:1rem;letter-spacing:2px;color:#94a3b8;font-weight:500;">ResilienceIQ</span>
+            <span style="font-family:'DM Mono',monospace;font-size:1rem;letter-spacing:2px;color:#94a3b8;font-weight:500;">NileLogic</span>
             <span style="color:#64748b;font-size:1.1rem;font-weight:300;">›</span>
             <span style="font-family:'DM Mono',monospace;font-size:1rem;letter-spacing:2px;color:#93c5fd;font-weight:500;">Wat-Intel</span>
             <span style="color:#64748b;font-size:1.1rem;font-weight:300;">›</span>
-            <span style="font-family:'DM Mono',monospace;font-size:1rem;letter-spacing:2px;color:white;font-weight:600;">NileLogic</span>
+            <span style="font-family:'DM Mono',monospace;font-size:1rem;letter-spacing:2px;color:white;font-weight:600;">AquaROI</span>
           </div>
         </div>
-        <div style="font-family:'Playfair Display',serif;font-size:clamp(2.5rem,5vw,4rem);font-weight:900;color:white;line-height:1.0;margin-bottom:0.4rem;letter-spacing:-1px;">NileLogic</div>
+        <div style="font-family:'Playfair Display',serif;font-size:clamp(2.5rem,5vw,4rem);font-weight:900;color:white;line-height:1.0;margin-bottom:0.4rem;letter-spacing:-1px;">AquaROI</div>
         
         <div style="font-size:0.88rem;color:#94a3b8;line-height:1.8;max-width:520px;margin-bottom:2rem;" data-i18n="welcome_desc">Water investment intelligence for regions where <span style="color:#cbd5e1;font-weight:500;">data is scarce and decisions can't wait</span>.</div>
         
-        <div style="font-size:0.62rem;color:#334155;font-family:'DM Mono',monospace;">Built by ResilienceIQ</div>
+        <div style="font-size:0.62rem;color:#334155;font-family:'DM Mono',monospace;">Built by NileLogic · Wat-Intel</div>
       </div>
     </div>
 
@@ -753,7 +753,7 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;hei
   <div class="auth-modal">
     <button class="auth-close" onclick="closeAuth()">✕</button>
     <div class="auth-title" id="authTitle">Sign in</div>
-    <div class="auth-sub">RESILIENCEIQ · NILELOGIC</div>
+    <div class="auth-sub">NILELOGIC · AQUAROI</div>
     <div class="auth-error" id="authError"></div>
     <div id="authFormName" class="auth-field" style="display:none;"><label>Full name</label><input type="text" id="authName" placeholder="Your name"></div>
     <div class="auth-field"><label>Email</label><input type="email" id="authEmail" placeholder="your@email.com" onkeydown="if(event.key==='Enter')submitAuth()"></div>
@@ -1631,7 +1631,7 @@ function renderAnalysis(r) {
         </tr>`).join('')}</tbody>
       </table>
     </div>
-    <div class="disclaimer">⚠️ NileLogic v2.1 is an AI-assisted planning tool. Rainfall from CHIRPS via ClimateSERV. PET from ERA5/Open-Meteo. Population & GDP from World Bank. Validate with local data before capital allocation.</div>`;
+    <div class="disclaimer">⚠️ AquaROI by NileLogic is an AI-assisted planning tool. Rainfall from CHIRPS via ClimateSERV. PET from ERA5/Open-Meteo. Population & GDP from World Bank. Validate with local data before capital allocation.</div>`;
 }
 
 // ── RENDER LIVE DATA TAB ──────────────────────────────────
@@ -1731,9 +1731,9 @@ function exportPDF() {
   // Header
   doc.setFillColor(30,41,59); doc.rect(0,0,210,28,'F');
   doc.setTextColor(255,255,255); doc.setFontSize(16); doc.setFont('helvetica','bold');
-  doc.text('NileLogic Investment Brief',14,12);
+  doc.text('AquaROI Investment Brief',14,12);
   doc.setFontSize(8); doc.setFont('helvetica','normal');
-  doc.text(`ResilienceIQ · Wat-Intel · ${date}`,14,20);
+  doc.text(`NileLogic · Wat-Intel · ${date}`,14,20);
   doc.text(`${country} > ${study}`,140,20);
 
   // Title
@@ -1798,10 +1798,10 @@ function exportPDF() {
   // Footer
   doc.setFillColor(30,41,59); doc.rect(0,285,210,12,'F');
   doc.setTextColor(148,163,184); doc.setFontSize(7);
-  doc.text('NileLogic · Wat-Intel · ResilienceIQ · Built by D. David S. Yaméogo',14,292);
+  doc.text('AquaROI · Wat-Intel · NileLogic · Built by D. David S. Yaméogo',14,292);
   doc.text('AI-assisted tool. Validate with local data before capital allocation.',140,292);
 
-  doc.save(`NileLogic_${study.replace(/[^a-z0-9]/gi,'_')}_${date.replace(/[^a-z0-9]/gi,'_')}.pdf`);
+  doc.save(`AquaROI_${study.replace(/[^a-z0-9]/gi,'_')}_${date.replace(/[^a-z0-9]/gi,'_')}.pdf`);
 }
 
 function exportExcel() {
@@ -1809,7 +1809,7 @@ function exportExcel() {
   const country = document.getElementById('country').value.split('|')[0];
   const sorted = [...r.investments].sort((a,b)=>b.weighted_score-a.weighted_score);
   const wsData = [
-    ['NileLogic Investment Analysis','','','','','','','','','','','',''],
+    ['AquaROI Investment Analysis','','','','','','','','','','','',''],
     ['Country',country,'Region',document.getElementById('region').value,'Study area',document.getElementById('studyarea').value,'','','','','','',''],
     ['SSP Pathways',getActivePills('sspGrid').join(', '),'Horizons',getActivePills('horizonGrid').join(', '),'','','','','','','','',''],
     ['Rainfall (CHIRPS)',liveData.rainfall?liveData.rainfall+'mm':'N/A','PET (ERA5)',liveData.pet?liveData.pet+'mm':'N/A','P/PET',liveData.rainfall&&liveData.pet?(liveData.rainfall/liveData.pet).toFixed(2):'N/A','','','','','','',''],
@@ -1832,14 +1832,14 @@ function exportExcel() {
     ['Data Strategy',r.data_strategy]
   ]);
   XLSX.utils.book_append_sheet(wb, ws2, 'Summary');
-  XLSX.writeFile(wb, `NileLogic_${country}_${new Date().toISOString().slice(0,10)}.xlsx`);
+  XLSX.writeFile(wb, `AquaROI_${country}_${new Date().toISOString().slice(0,10)}.xlsx`);
 }
 
 function exportJSON() {
   const r = window._analysisResult; if (!r) return;
   const blob = new Blob([JSON.stringify({...r, liveData, metadata:{country:document.getElementById('country').value.split('|')[0],date:new Date().toISOString()}},null,2)], {type:'application/json'});
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-  a.download = `NileLogic_${document.getElementById('country').value.split('|')[0]}_${new Date().toISOString().slice(0,10)}.json`;
+  a.download = `AquaROI_${document.getElementById('country').value.split('|')[0]}_${new Date().toISOString().slice(0,10)}.json`;
   a.click();
 }
 
